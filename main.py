@@ -6,7 +6,6 @@ from src.plots import Plots
 app = sg.Window("PLLSim", new_layout(), finalize=True)
 plots_canvas = app['-plots_canvas-'].TKCanvas
 plots = Plots(plots_canvas)
-plots.draw()
 
 while True:
     event, values = app.read(timeout=100)

@@ -10,11 +10,22 @@ class Plots:
         for ax, label in zip(axes, y_labels):
             ax.set_ylabel(label)
             ax.grid()
+        # create figure and axes
         self.fig = fig
         self.fig_agg = draw_figure(plots_canvas, fig)
         self.axes = axes
+        self.axes_values = [[0 for _ in range(100)] for _ in axes]
+        self.time_value = -100
+        # create initial plots
+        self.draw([0 for _ in axes])
 
-    def draw(self):
+    def draw(self, new_values):
+        self.time_value += 1
+        for ax, ax_values, new_value in zip(self.axes, self.axes_values, new_values):
+            ax_values.pop(0)
+            ax_values.append(new_value)
+            ax.plot(range(self.time_value, self.time_value+100), ax_values)
+
         self.fig_agg.draw()
 
 
