@@ -18,4 +18,4 @@ def control_layout_row() -> list:
 
 
 def plots_layout_row() -> list:
-    return [sg.Canvas(size=(640, 480), key="-plots_canvas-", expand_x=True)]
+    return [sg.Canvas(key="-plots_canvas-", expand_x=True)]
