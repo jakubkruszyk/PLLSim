@@ -7,17 +7,15 @@ axes_labels = ("Input oscillator", "Output signal")
 
 class Plots:
     def __init__(self, plots_canvas):
-        fig, axes = subplots(len(axes_labels))
+        self.fig, self.axes = subplots(len(axes_labels))
         # create figure and axes
-        self.fig = fig
-        self.fig_agg = draw_figure(plots_canvas, fig)
-        self.axes = axes
-        self.axes_values = [[0 for _ in range(100)] for _ in axes]
+        self.fig_agg = draw_figure(plots_canvas, self.fig)
+        self.axes_values = [[0 for _ in range(100)] for _ in self.axes]
         self.time_value = -100
         # style plots
         self.style_axes()
         # create initial plots
-        self.draw([0 for _ in axes])
+        self.draw([0 for _ in self.axes])
 
     def draw(self, new_values):
         self.time_value += 1

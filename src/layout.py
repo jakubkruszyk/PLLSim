@@ -11,10 +11,18 @@ def new_layout() -> list[list]:
 
 
 def control_layout_row() -> list:
-    filter_control = [[sg.Text("N"), sg.Input("10", key="-N_counter_set-", size=6)],
-                      [sg.Text("M"), sg.Input("10", key="-M_counter_set-", size=6)]
+    filter_control = [[sg.Text("N"), sg.Slider(range=(5, 30), default_value=15,
+                                               key="-n_counter_value-", orientation='h', enable_events=True)],
+                      [sg.Text("M"), sg.Slider(range=(5, 30), default_value=15,
+                                               key="-m_counter_value-", orientation='h', enable_events=True)]
                       ]
-    return [sg.Frame("Filter settings", filter_control)]
+
+    osc_control = [[sg.Text("Reference:"), sg.Slider(range=(5, 30), default_value=15,
+                                                     key="-ref_osc_value-", orientation='h', enable_events=True)],
+                   [sg.Text("Local:"), sg.Push(), sg.Slider(range=(5, 30), default_value=15,
+                                                            key="-loc_osc_value-", orientation='h', enable_events=True)]
+                   ]
+    return [sg.Frame("Oscillators settings", osc_control), sg.Frame("Filter settings", filter_control)]
 
 
 def plots_layout_row() -> list:
