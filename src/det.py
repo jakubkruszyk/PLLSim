@@ -1,24 +1,30 @@
-class Det:
+class Detector:
     """
-    Container class for all components creating PLL circuit.
+    Lead Lag phase detector.
     """
-    def __init__(self, osc_loc):
-        self.lead_c = 0                 #lead counter
-        self.lag_c = 0                  #lag counter
-        self.last = osc_loc.amp         #previous_local_osc_state
+    def __init__(self, lead_lag_max, total_max):
+        self.ref_osc_last = 0  # previous local_osc state
+        self.loc_osc_last = 0
+        self.output = (0, 0)
     
-    def run(self, osc_in, osc_loc):
-        if (self.osc_loc != self.last):
-            self.last = osc_loc.amp
-            if (osc_in.amp == 1):       #zbocze wysokie
-                self.lead_c += 1
-            else:                       #zbocze niskie
-                self.lag_c += 1
-        if(self.lead_c+self.lag_c>=5):
-            self.lead_c = 0
-            self.lag_c = 0
-            return 0;
-        if (self.lag_c>=4):
-            return -1;
-        if (self.lead_c>4):
-            return(1)
+    def run(self, osc_ref: int, osc_loc: int) -> (int, int):
+        """
+        Returns:
+            tuple of (lead, lag) signals
+        """
+        if not(self.loc_osc_last == 0 and osc_loc == 1):
+            # Early return if rising edge of local oscillator(dco) not detected.
+            self.output = (0, 0)
+        else:
+            # check if ref_osc generated rising edge alongside loc_osc
+            if self.ref_osc_last == 0 and osc_ref == 1:
+                self.output = (0, 0)
+
+            if osc_ref:
+                self.output = (1, 0)
+            else:
+                self.output = (0, 1)
+
+        self.loc_osc_last = osc_loc
+        self.ref_osc_last = osc_ref
+        return self.output
