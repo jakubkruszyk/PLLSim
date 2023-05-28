@@ -1,4 +1,4 @@
-class OSC:
+class Osc:
     def __init__(self):
         self.tics = 0
         self.freq = 10
@@ -8,5 +8,5 @@ class OSC:
         self.tics += 1
         if self.freq < self.tics:
             self.amp ^= 1
-            self.tics=0
+            self.tics = 0
         return self.amp
