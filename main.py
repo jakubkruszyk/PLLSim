@@ -3,7 +3,7 @@ from src.layout import new_layout
 from src.plots import Plots
 from src.gui_routines import handle_events
 from src.pll import PLL
-from src.ocs import OSC
+
 # create app and plots
 app = sg.Window("PLLSim", new_layout(), finalize=True)
 plots_canvas = app['-plots_canvas-'].TKCanvas
