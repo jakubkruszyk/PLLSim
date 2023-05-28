@@ -1,3 +1,3 @@
-cmd /c  "venv\Scripts\python main.py"
+cmd /k  "venv\Scripts\python main.py"
 
 
