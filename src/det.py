@@ -2,7 +2,7 @@ class Detector:
     """
     Lead Lag phase detector.
     """
-    def __init__(self, lead_lag_max, total_max):
+    def __init__(self):
         self.ref_osc_last = 0  # previous local_osc state
         self.loc_osc_last = 0
         self.output = (0, 0)
@@ -19,8 +19,7 @@ class Detector:
             # check if ref_osc generated rising edge alongside loc_osc
             if self.ref_osc_last == 0 and osc_ref == 1:
                 self.output = (0, 0)
-
-            if osc_ref:
+            elif osc_ref:
                 self.output = (1, 0)
             else:
                 self.output = (0, 1)

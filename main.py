@@ -9,8 +9,8 @@ app = sg.Window("PLLSim", new_layout(), finalize=True)
 plots_canvas = app['-plots_canvas-'].TKCanvas
 plots = Plots(plots_canvas)
 
-# demo counter
-pll = PLL()
+# PLL structure
+pll = PLL(app['-ref_osc_value-'].DefaultValue, app['-loc_osc_value-'].DefaultValue)
 
 while True:
     event, values = app.read(timeout=200)

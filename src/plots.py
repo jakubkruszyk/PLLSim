@@ -1,13 +1,13 @@
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.pyplot import subplots
 
 
-axes_labels = ("Input oscillator", "Output signal")
+axes_labels = ("Ref", "DCO", "Lead", "Lag")
 
 
 class Plots:
     def __init__(self, plots_canvas):
-        self.fig, self.axes = subplots(len(axes_labels))
+        self.fig, self.axes = subplots(len(axes_labels), sharex='all')
         # create figure and axes
         self.fig_agg = draw_figure(plots_canvas, self.fig)
         self.axes_values = [[0 for _ in range(100)] for _ in self.axes]
@@ -24,12 +24,14 @@ class Plots:
             ax_values.append(new_value)
             ax.cla()
             ax.plot(range(self.time_value, self.time_value+100), ax_values)
+            # ax.stem(range(self.time_value, self.time_value+100), ax_values)
         self.style_axes()
         self.fig_agg.draw()
 
     def style_axes(self):
         for ax, label in zip(self.axes, axes_labels):
             ax.set_ylabel(label)
+            ax.set_ylim([0, 1.1])
             ax.grid()
 
 
