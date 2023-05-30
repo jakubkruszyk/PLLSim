@@ -11,10 +11,10 @@ def new_layout() -> list[list]:
 
 
 def control_layout_row() -> list:
-    filter_control = [[sg.Text("N"), sg.Slider(range=(5, 30), default_value=15,
-                                               key="-n_counter_value-", orientation='h', enable_events=True)],
-                      [sg.Text("M"), sg.Slider(range=(5, 30), default_value=15,
-                                               key="-m_counter_value-", orientation='h', enable_events=True)]
+    filter_control = [[sg.Text("Lead"), sg.Slider(range=(5, 30), default_value=15,
+                                                  key="-lead_counter_value-", orientation='h', enable_events=True)],
+                      [sg.Text("Lag"), sg.Slider(range=(5, 30), default_value=15,
+                                                 key="-lag_counter_value-", orientation='h', enable_events=True)]
                       ]
 
     osc_control = [[sg.Text("Reference:"), sg.Slider(range=(5, 30), default_value=15,
