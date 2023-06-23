@@ -3,6 +3,7 @@ from src.layout import new_layout
 from src.plots import Plots
 from src.gui_routines import handle_events
 from src.pll import PLL
+from random import randint
 
 # create app and plots
 app = sg.Window("PLLSim", new_layout(), finalize=True)
@@ -17,6 +18,11 @@ sum_cnt_max = app['-sum_counter_value-'].DefaultValue
 
 # PLL structure
 pll = PLL(ref_freq, dco_freq, lead_lag_cnt_max, sum_cnt_max)
+
+# Random DCO starting phase
+phase = randint(-5, 5)
+print(phase)
+pll.dco.tics = phase
 
 while True:
     event, values = app.read(timeout=50)
