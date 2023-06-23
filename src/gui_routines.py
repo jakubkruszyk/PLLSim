@@ -17,8 +17,8 @@ def handle_events(app, event, values, pll):
     elif event == "-start_btn-":
         if app[event].metadata:
             app[event].metadata = False
-            app[event].update(text="Stop", button_color=STOP_BUTTON_COLOR)
+            app[event].update(text="Stopped", button_color=STOP_BUTTON_COLOR)
         else:
             app[event].metadata = True
-            app[event].update(text="Start", button_color=START_BUTTON_COLOR)
+            app[event].update(text="Running", button_color=START_BUTTON_COLOR)
 
