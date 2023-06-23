@@ -13,11 +13,11 @@ class Detector:
             tuple of (lead, lag) signals
         """
         if not(self.loc_osc_last == 0 and osc_loc == 1):
-            # Early return if rising edge of local oscillator(dco) not detected.
+            # Early return if edge of local oscillator(dco) not detected.
             self.output = (0, 0)
         else:
-            # check if ref_osc generated rising edge alongside loc_osc
-            if self.ref_osc_last == 0 and osc_ref == 1:
+            # check if ref_osc generated edge alongside loc_osc
+            if self.ref_osc_last != osc_ref:
                 self.output = (0, 0)
             elif osc_ref:
                 self.output = (1, 0)
