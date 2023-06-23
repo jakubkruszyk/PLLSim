@@ -8,7 +8,7 @@ def handle_events(app, event, values, pll):
     elif event == "-loc_osc_value-":
         pll.dco.freq = values[event]
 
-    elif event == "-lead_lag_counter_value":
+    elif event == "-lead_lag_counter_value-":
         pll.filter.lead_lag_cnt_max = values[event]
 
     elif event == "-sum_counter_value-":
