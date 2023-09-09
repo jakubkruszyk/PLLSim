@@ -6,7 +6,6 @@ class Osc:
 
     def run(self):
         self.tics += 1
-        if self.tics >= self.freq:
-            self.amp ^= 1
-            self.tics = 0
+        if (self.tics % self.freq) == 0:
+            self.amp = not self.amp
         return self.amp
