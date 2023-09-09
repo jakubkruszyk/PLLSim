@@ -7,14 +7,16 @@ class PLL:
     """
     Container class for all components creating PLL circuit.
     """
-    def __init__(self, ref_freq, dco_freq, lead_cnt_max, lag_cnt_max):
-        self.ref_osc = Osc(ref_freq)
-        self.dco = Osc(dco_freq)
+    def __init__(self, ref_freq, dco_freq, lead_lag_cnt_max, sum_cnt_max):
+        self.input_osc = Osc(ref_freq)
+        self.local_osc = Osc(dco_freq)
         self.detector = Detector()
-        self.filter = SequentialFilter(lead_cnt_max, lag_cnt_max)
+        self.filter = SequentialFilter(lead_lag_cnt_max, sum_cnt_max)
 
     def run(self) -> list:
-        x = self.ref_osc.run()
-        y = self.dco.run()
-        lead, lag = self.detector.run(x, y)
-        return [x, y, lead, lag]
+        input_value = self.input_osc.run()
+        local_value = self.local_osc.run()
+        lead, lag = self.detector.run(input_value, local_value)
+        delta = self.filter.run(lead, lag)
+        # self.dco.freq += delta
+        return [input_value, local_value, lead, lag, delta]
