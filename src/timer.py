@@ -22,5 +22,6 @@ class RepeatedTimer(object):
             self.is_running = True
 
     def stop(self):
-        self._timer.cancel()
-        self.is_running = False
+        if self._timer:
+            self._timer.cancel()
+            self.is_running = False

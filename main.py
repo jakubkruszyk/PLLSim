@@ -1,35 +1,43 @@
-import dearpygui.dearpygui as dpg
-from src.globals import DATA_POINTS_NUM
 from src.pll import PLL
 from src.layout import *
 from src.timer import RepeatedTimer
 from src.gui_routines import pll_update
 
-# Default parameters
-ref_freq = 10
-dco_freq = 10
-lead_cnt_max = 1
-lag_cnt_max = 1
 
 # Plots data lists
-
-# input, local, lead, lag -> match PLL run output
-data = [[0 for _ in range(DATA_POINTS_NUM)] for _ in range(4)]
+# input, local, lead, lag, delta -> match PLL run output
+data = [[0 for _ in range(DATA_POINTS_NUM)] for _ in range(5)]
 time = [i for i in range(-DATA_POINTS_NUM, 0)]
 
 # PLL structure
-pll = PLL(ref_freq, dco_freq, lead_cnt_max, lag_cnt_max)
+pll = PLL(DEFAULT_INPUT_PERIOD, DEFAULT_LOCAL_PERIOD, DEFAULT_LAG_COUNTER, DEFAULT_SUM_COUNTER)
 
+last_run = False
 
 # Event loop timer
-timer = RepeatedTimer(0.02, pll_update, pll, data, time)
+timer = RepeatedTimer(REFRESH_RATE, pll_update, pll, data, time)
 
 dpg.create_context()
 dpg.create_viewport(title='Custom Title')
-create_controls(time, data)
-timer.start()
+create_controls(time, data, pll)
 dpg.setup_dearpygui()
 dpg.show_viewport()
-dpg.start_dearpygui()
+
+while dpg.is_dearpygui_running():
+    running = dpg.get_item_user_data("btn_start")
+    speed_update = dpg.get_item_user_data("slider_speed")
+    if running != last_run:
+        if running:
+            timer.start()
+        else:
+            timer.stop()
+        last_run = running
+
+    if speed_update:
+        timer.interval = 1 / dpg.get_value("slider_speed")
+        dpg.set_item_user_data("slider_speed", False)
+
+    dpg.render_dearpygui_frame()
+
 dpg.destroy_context()
 timer.stop()

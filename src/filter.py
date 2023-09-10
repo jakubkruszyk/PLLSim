@@ -16,12 +16,12 @@ class SequentialFilter:
         """
         self.lead += lead
         self.lag += lag
-        if (self.lead + self.lag) > self.sum_cnt_max:
+        if (self.lead + self.lag) >= self.sum_cnt_max:
             self.output = 0
-        elif self.lag > self.lead_lag_cnt_max:
-            self.output = 1
-        elif self.lead > self.lead_lag_cnt_max:
+        elif self.lag >= self.lead_lag_cnt_max:
             self.output = -1
+        elif self.lead >= self.lead_lag_cnt_max:
+            self.output = 1
         else:
             # early return if none of counters overflows
             return 0
@@ -30,3 +30,8 @@ class SequentialFilter:
         self.lead = 0
         self.lag = 0
         return self.output
+
+    def reset(self):
+        self.lead = 0
+        self.lag = 0
+        self.output = 0

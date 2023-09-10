@@ -1,42 +1,59 @@
-import dearpygui.dearpygui as dpg
-from src.globals import DATA_POINTS_NUM
+from src.globals import *
+from src.gui_routines import *
 
 
-def create_controls(time, data):
-    with dpg.window(label="Controls", width=300, height=300):
+def create_controls(time, data, pll):
+    with dpg.window(label="Controls", width=300):
         with dpg.group(horizontal=True):
-            dpg.add_spacer(width=75)
-            dpg.add_button(label="Stopped", tag="btn_start", height=40, width=100)
-        dpg.add_slider_int(label="Speed", tag="slider_tempo", width=150,
-                           min_value=10, max_value=30, default_value=20)
+            dpg.add_button(label="Reset", tag="btn_reset", height=40, width=100,
+                           callback=reset_callback, user_data=(time, data, pll))
+            dpg.add_button(label="Stopped", tag="btn_start", height=40, width=100,
+                           callback=toggle_sim_run, user_data=False)
+        dpg.add_slider_int(label="Speed", tag="slider_speed", width=150, callback=update_speed, user_data=False,
+                           min_value=MIN_SPEED, max_value=MAX_SPEED, default_value=DEFAULT_SPEED)
+        dpg.add_slider_int(label="Initial phase", tag="slider_phase", width=150, user_data=[pll, DEFAULT_PHASE],
+                           min_value=MIN_PHASE, max_value=MAX_PHASE, default_value=DEFAULT_PHASE, callback=update_phase)
+        dpg.add_slider_int(label="Step", tag="slider_step", width=150, user_data=pll, callback=update_step,
+                           min_value=MIN_STEP, max_value=MAX_STEP, default_value=DEFAULT_STEP)
 
         dpg.add_spacer(height=10)
         dpg.add_separator()
         dpg.add_text("Counters filter settings")
-        dpg.add_slider_int(label="Lead/Lag counter", tag="slider_lead_lag_counter", width=150,
-                           min_value=10, max_value=30, default_value=20)
-        dpg.add_slider_int(label="Sum counter", tag="slider_sum_counter", width=150,
-                           min_value=10, max_value=30, default_value=20)
+        dpg.add_slider_int(label="Lead/Lag counter", tag="slider_lead_lag_counter", width=150, user_data=pll,
+                           callback=update_counters_callback, min_value=MIN_LAG_COUNTER, max_value=MAX_LAG_COUNTER,
+                           default_value=DEFAULT_LAG_COUNTER)
+        dpg.add_slider_int(label="Sum counter", tag="slider_sum_counter", width=150, callback=update_counters_callback,
+                           min_value=MIN_SUM_COUNTER, max_value=MAX_SUM_COUNTER, default_value=DEFAULT_SUM_COUNTER,
+                           user_data=pll)
 
         dpg.add_spacer(height=10)
         dpg.add_separator()
         dpg.add_text("Generators settings")
-        dpg.add_slider_int(label="Input", tag="slider_input_gen", width=150,
-                           min_value=10, max_value=30, default_value=20)
-        dpg.add_slider_int(label="Local", tag="slider_local_gen", width=150,
-                           min_value=10, max_value=30, default_value=20)
+        dpg.add_slider_int(label="Input", tag="slider_input_gen", width=150, callback=update_freq_callback,
+                           min_value=MIN_INPUT_PERIOD, max_value=MAX_INPUT_PERIOD, default_value=DEFAULT_INPUT_PERIOD,
+                           user_data=pll)
+        dpg.add_slider_int(label="Local", tag="slider_local_gen", width=150, callback=update_freq_callback,
+                           min_value=MIN_LOCAL_PERIOD, max_value=MAX_LOCAL_PERIOD, default_value=DEFAULT_LOCAL_PERIOD,
+                           user_data=pll)
 
-    with dpg.window(label="Plots", width=550, height=350, pos=(300, 0)):
-        with dpg.plot(label="Input oscillator", height=120, width=500):
-            dpg.add_plot_axis(dpg.mvXAxis, tag="input_x_axis", no_tick_marks=True, no_tick_labels=True)
-            dpg.add_plot_axis(dpg.mvYAxis, tag="input_y_axis", no_tick_marks=True, no_tick_labels=True)
-            dpg.set_axis_limits("input_y_axis", -0.1, 1.1)
-            dpg.set_axis_limits("input_x_axis", 0, DATA_POINTS_NUM)
-            dpg.add_line_series(time, data[0], parent="input_y_axis", tag="input_series")
+    with dpg.window(label="Plots", width=550, height=800, pos=(300, 0)):
+        tags = ("input", "local", "lead", "lag")
+        labels = ("Input oscillator", "Local oscillator", "Lead detection", "Lag detection")
+        for tag, label in zip(tags, labels):
+            with dpg.plot(label=label, height=120, width=500):
+                dpg.add_plot_axis(dpg.mvXAxis, tag=f"{tag}_x_axis", no_tick_marks=True, no_tick_labels=True)
+                dpg.add_plot_axis(dpg.mvYAxis, tag=f"{tag}_y_axis", no_tick_marks=True, no_tick_labels=True)
+                dpg.set_axis_limits(f"{tag}_y_axis", -0.1, 1.1)
+                dpg.set_axis_limits(f"{tag}_x_axis", 0, DATA_POINTS_NUM)
+                dpg.add_line_series(time, data[0], parent=f"{tag}_y_axis", tag=f"{tag}_series")
 
-        with dpg.plot(label="Local oscillator", height=150, width=500):
-            dpg.add_plot_axis(dpg.mvXAxis, tag="local_x_axis", label="Time")
-            dpg.add_plot_axis(dpg.mvYAxis, tag="local_y_axis", no_tick_marks=True, no_tick_labels=True)
-            dpg.set_axis_limits("local_y_axis", -0.1, 1.1)
-            dpg.set_axis_limits("local_x_axis", 0, DATA_POINTS_NUM)
-            dpg.add_line_series(time, data[1], parent="local_y_axis", tag="local_series")
+        with dpg.plot(label="Filter output", height=150, width=500):
+            dpg.add_plot_axis(dpg.mvXAxis, tag="delta_x_axis", label="Time")
+            dpg.add_plot_axis(dpg.mvYAxis, tag="delta_y_axis", no_tick_marks=True, no_tick_labels=True)
+            dpg.set_axis_limits("delta_y_axis", -1.1, 1.1)
+            dpg.set_axis_limits("delta_x_axis", 0, DATA_POINTS_NUM)
+            dpg.add_line_series(time, data[0], parent="delta_y_axis", tag="delta_series")
+
+        with dpg.group(horizontal=True):
+            dpg.add_text("Lead counter: 0", tag="lead_indicator")
+            dpg.add_text("Lag counter: 0", tag="lag_indicator")
