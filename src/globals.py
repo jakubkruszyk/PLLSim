@@ -31,3 +31,30 @@ DEFAULT_INPUT_PERIOD = 20
 MAX_LOCAL_PERIOD = 40
 MIN_LOCAL_PERIOD = 5
 DEFAULT_LOCAL_PERIOD = 19
+
+PRESETS = {
+    "Lagging": {
+        "phase": 2,
+        "step": 5,
+        "lag_counter": 5,
+        "sum_counter": 9,
+        "input_period": 20,
+        "local_period": 19
+    },
+    "Leading": {
+        "phase": -2,
+        "step": 5,
+        "lag_counter": 5,
+        "sum_counter": 9,
+        "input_period": 19,
+        "local_period": 20
+    },
+    "Equal": {
+        "phase": 2,
+        "step": 5,
+        "lag_counter": 5,
+        "sum_counter": 9,
+        "input_period": 20,
+        "local_period": 20
+    }
+}

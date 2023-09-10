@@ -27,3 +27,7 @@ class Detector:
         self.loc_osc_last = osc_loc
         self.ref_osc_last = osc_ref
         return self.output
+
+    def reset(self):
+        self.ref_osc_last = 0
+        self.loc_osc_last = 0

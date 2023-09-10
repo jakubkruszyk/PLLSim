@@ -2,6 +2,17 @@ from src.globals import *
 from src.gui_routines import *
 
 
+def create_layout(time, data, pll):
+    with dpg.font_registry():
+        default_font = dpg.add_font("src/LiberationMono-Regular.ttf", 16)
+        counter_font = dpg.add_font("src/LiberationMono-Regular.ttf", 24)
+    create_controls(time, data, pll)
+    create_vertical_plots(time, data)
+    dpg.bind_font(default_font)
+    dpg.bind_item_font("lead_indicator", counter_font)
+    dpg.bind_item_font("lag_indicator", counter_font)
+
+
 def create_controls(time, data, pll):
     with dpg.window(label="Controls", width=300, height=800, no_close=True):
         with dpg.group(horizontal=True):
@@ -15,6 +26,8 @@ def create_controls(time, data, pll):
                            min_value=MIN_PHASE, max_value=MAX_PHASE, default_value=DEFAULT_PHASE, callback=update_phase)
         dpg.add_slider_int(label="Step", tag="slider_step", width=150, user_data=pll, callback=update_step,
                            min_value=MIN_STEP, max_value=MAX_STEP, default_value=DEFAULT_STEP)
+        dpg.add_combo(label="Presets", items=list(PRESETS.keys()), default_value="Lagging", width=150,
+                      callback=set_preset, user_data=pll)
 
         dpg.add_spacer(height=10)
         dpg.add_separator()
@@ -36,43 +49,39 @@ def create_controls(time, data, pll):
                            min_value=MIN_LOCAL_PERIOD, max_value=MAX_LOCAL_PERIOD, default_value=DEFAULT_LOCAL_PERIOD,
                            user_data=pll)
 
-    with dpg.window(label="Plots", width=1050, height=800, pos=(300, 0), no_close=True):
-        with dpg.group(horizontal=True):
-            create_vertical_plots(time, data)
-            create_phase_plot(time, data[5:])
-
 
 def create_vertical_plots(time, data):
-    with dpg.group():
-        tags = ("input", "local", "lead", "lag")
-        labels = ("Input oscillator", "Local oscillator", "Lead detection", "Lag detection")
-        for tag, label in zip(tags, labels):
-            with dpg.plot(label=label, height=120, width=500):
-                dpg.add_plot_axis(dpg.mvXAxis, tag=f"{tag}_x_axis", no_tick_marks=True, no_tick_labels=True)
-                dpg.add_plot_axis(dpg.mvYAxis, tag=f"{tag}_y_axis", no_tick_marks=True, no_tick_labels=True)
-                dpg.set_axis_limits(f"{tag}_y_axis", -0.1, 1.1)
-                dpg.set_axis_limits(f"{tag}_x_axis", 0, DATA_POINTS_NUM)
-                dpg.add_line_series(time, data[0], parent=f"{tag}_y_axis", tag=f"{tag}_series")
-
-        with dpg.plot(label="Filter output", height=150, width=500):
-            dpg.add_plot_axis(dpg.mvXAxis, tag="delta_x_axis", label="Time")
-            dpg.add_plot_axis(dpg.mvYAxis, tag="delta_y_axis", no_tick_marks=True, no_tick_labels=True)
-            dpg.set_axis_limits("delta_y_axis", -1.1, 1.1)
-            dpg.set_axis_limits("delta_x_axis", 0, DATA_POINTS_NUM)
-            dpg.add_line_series(time, data[0], parent="delta_y_axis", tag="delta_series")
-
+    with dpg.window(label="Plots", width=1050, height=800, pos=(300, 0), no_close=True):
         with dpg.group(horizontal=True):
-            dpg.add_text("Lead counter: 0", tag="lead_indicator")
-            dpg.add_text("Lag counter: 0", tag="lag_indicator")
+            with dpg.group():
+                tags = ("input", "local", "lead", "lag")
+                labels = ("Input oscillator", "Local oscillator", "Lead detection", "Lag detection")
+                for tag, label in zip(tags, labels):
+                    with dpg.plot(label=label, height=120, width=500):
+                        dpg.add_plot_axis(dpg.mvXAxis, tag=f"{tag}_x_axis", no_tick_marks=True, no_tick_labels=True)
+                        dpg.add_plot_axis(dpg.mvYAxis, tag=f"{tag}_y_axis", no_tick_marks=True, no_tick_labels=True)
+                        dpg.set_axis_limits(f"{tag}_y_axis", -0.1, 1.1)
+                        dpg.set_axis_limits(f"{tag}_x_axis", 0, DATA_POINTS_NUM)
+                        dpg.add_line_series(time, data[0], parent=f"{tag}_y_axis", tag=f"{tag}_series")
 
+                with dpg.plot(label="Filter output", height=150, width=500):
+                    dpg.add_plot_axis(dpg.mvXAxis, tag="delta_x_axis", label="Time")
+                    dpg.add_plot_axis(dpg.mvYAxis, tag="delta_y_axis", no_tick_marks=True, no_tick_labels=True)
+                    dpg.set_axis_limits("delta_y_axis", -1.1, 1.1)
+                    dpg.set_axis_limits("delta_x_axis", 0, DATA_POINTS_NUM)
+                    dpg.add_line_series(time, data[0], parent="delta_y_axis", tag="delta_series")
 
-def create_phase_plot(time, data):
-    with dpg.plot(label="Oscillators phases", height=500, width=500, anti_aliased=True):
-        dpg.add_plot_legend()
-        dpg.add_plot_axis(dpg.mvXAxis, tag="phase_x_axis", label="Time")
-        dpg.add_plot_axis(dpg.mvYAxis, tag="phase_y_axis", no_tick_marks=True, no_tick_labels=True, label="Time/Period")
-        dpg.set_axis_limits("phase_x_axis", 0, DATA_POINTS_NUM)
-        dpg.set_axis_limits("phase_y_axis", 0, 5)
-        dpg.add_line_series(time, data[0], parent="phase_y_axis", tag="phase_input_series", label="Input")
-        dpg.add_line_series(time, data[1], parent="phase_y_axis", tag="phase_local_series", label="Local")
+                with dpg.group(horizontal=True):
+                    dpg.add_text("Lead counter: 0", tag="lead_indicator")
+                    dpg.add_spacer(width=50)
+                    dpg.add_text("Lag counter: 0", tag="lag_indicator")
 
+            with dpg.plot(label="Oscillators phases", height=500, width=500, anti_aliased=True):
+                dpg.add_plot_legend()
+                dpg.add_plot_axis(dpg.mvXAxis, tag="phase_x_axis", label="Time")
+                dpg.add_plot_axis(dpg.mvYAxis, tag="phase_y_axis", no_tick_marks=True, no_tick_labels=True,
+                                  label="Time/Period")
+                dpg.set_axis_limits("phase_x_axis", 0, DATA_POINTS_NUM)
+                dpg.set_axis_limits("phase_y_axis", 0, 5)
+                dpg.add_line_series(time, data[5], parent="phase_y_axis", tag="phase_input_series", label="Input")
+                dpg.add_line_series(time, data[6], parent="phase_y_axis", tag="phase_local_series", label="Local")

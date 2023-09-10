@@ -19,10 +19,9 @@ timer = RepeatedTimer(REFRESH_RATE, pll_update, pll, data, time)
 
 dpg.create_context()
 dpg.create_viewport(title='PLLSim', width=1350)
-create_controls(time, data, pll)
+create_layout(time, data, pll)
 dpg.setup_dearpygui()
 dpg.show_viewport()
-pll_update(pll, data, time)
 
 while dpg.is_dearpygui_running():
     running = dpg.get_item_user_data("btn_start")
