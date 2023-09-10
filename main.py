@@ -6,7 +6,7 @@ from src.gui_routines import pll_update
 
 # Plots data lists
 # input, local, lead, lag, delta -> match PLL run output
-data = [[0 for _ in range(DATA_POINTS_NUM)] for _ in range(5)]
+data = [[0 for _ in range(DATA_POINTS_NUM)] for _ in range(7)]
 time = [i for i in range(-DATA_POINTS_NUM, 0)]
 
 # PLL structure
@@ -18,10 +18,11 @@ last_run = False
 timer = RepeatedTimer(REFRESH_RATE, pll_update, pll, data, time)
 
 dpg.create_context()
-dpg.create_viewport(title='Custom Title')
+dpg.create_viewport(title='PLLSim', width=1350)
 create_controls(time, data, pll)
 dpg.setup_dearpygui()
 dpg.show_viewport()
+pll_update(pll, data, time)
 
 while dpg.is_dearpygui_running():
     running = dpg.get_item_user_data("btn_start")

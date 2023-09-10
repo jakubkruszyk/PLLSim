@@ -3,7 +3,7 @@ from src.gui_routines import *
 
 
 def create_controls(time, data, pll):
-    with dpg.window(label="Controls", width=300):
+    with dpg.window(label="Controls", width=300, height=800, no_close=True):
         with dpg.group(horizontal=True):
             dpg.add_button(label="Reset", tag="btn_reset", height=40, width=100,
                            callback=reset_callback, user_data=(time, data, pll))
@@ -36,7 +36,14 @@ def create_controls(time, data, pll):
                            min_value=MIN_LOCAL_PERIOD, max_value=MAX_LOCAL_PERIOD, default_value=DEFAULT_LOCAL_PERIOD,
                            user_data=pll)
 
-    with dpg.window(label="Plots", width=550, height=800, pos=(300, 0)):
+    with dpg.window(label="Plots", width=1050, height=800, pos=(300, 0), no_close=True):
+        with dpg.group(horizontal=True):
+            create_vertical_plots(time, data)
+            create_phase_plot(time, data[5:])
+
+
+def create_vertical_plots(time, data):
+    with dpg.group():
         tags = ("input", "local", "lead", "lag")
         labels = ("Input oscillator", "Local oscillator", "Lead detection", "Lag detection")
         for tag, label in zip(tags, labels):
@@ -57,3 +64,15 @@ def create_controls(time, data, pll):
         with dpg.group(horizontal=True):
             dpg.add_text("Lead counter: 0", tag="lead_indicator")
             dpg.add_text("Lag counter: 0", tag="lag_indicator")
+
+
+def create_phase_plot(time, data):
+    with dpg.plot(label="Oscillators phases", height=500, width=500, anti_aliased=True):
+        dpg.add_plot_legend()
+        dpg.add_plot_axis(dpg.mvXAxis, tag="phase_x_axis", label="Time")
+        dpg.add_plot_axis(dpg.mvYAxis, tag="phase_y_axis", no_tick_marks=True, no_tick_labels=True, label="Time/Period")
+        dpg.set_axis_limits("phase_x_axis", 0, DATA_POINTS_NUM)
+        dpg.set_axis_limits("phase_y_axis", 0, 5)
+        dpg.add_line_series(time, data[0], parent="phase_y_axis", tag="phase_input_series", label="Input")
+        dpg.add_line_series(time, data[1], parent="phase_y_axis", tag="phase_local_series", label="Local")
+

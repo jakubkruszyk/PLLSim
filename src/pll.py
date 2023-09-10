@@ -22,4 +22,6 @@ class PLL:
         lead, lag = self.detector.run(input_value, local_value)
         delta = self.filter.run(lead, lag)
         self.local_osc.tics += delta * self.step
-        return [input_value, local_value, lead, lag, delta]
+        input_phase = self.input_osc.tics / self.input_osc.period
+        local_phase = self.local_osc.tics / self.local_osc.period
+        return [input_value, local_value, lead, lag, delta, input_phase, local_phase]
