@@ -57,14 +57,14 @@ def create_vertical_plots(time, data):
                 tags = ("input", "local", "lead", "lag")
                 labels = ("Input oscillator", "Local oscillator", "Lead detection", "Lag detection")
                 for tag, label in zip(tags, labels):
-                    with dpg.plot(label=label, height=120, width=500):
+                    with dpg.plot(label=label, height=120, width=500, anti_aliased=True):
                         dpg.add_plot_axis(dpg.mvXAxis, tag=f"{tag}_x_axis", no_tick_marks=True, no_tick_labels=True)
                         dpg.add_plot_axis(dpg.mvYAxis, tag=f"{tag}_y_axis", no_tick_marks=True, no_tick_labels=True)
                         dpg.set_axis_limits(f"{tag}_y_axis", -0.1, 1.1)
                         dpg.set_axis_limits(f"{tag}_x_axis", 0, DATA_POINTS_NUM)
                         dpg.add_line_series(time, data[0], parent=f"{tag}_y_axis", tag=f"{tag}_series")
 
-                with dpg.plot(label="Filter output", height=150, width=500):
+                with dpg.plot(label="Filter output", height=150, width=500, anti_aliased=True):
                     dpg.add_plot_axis(dpg.mvXAxis, tag="delta_x_axis", label="Time")
                     dpg.add_plot_axis(dpg.mvYAxis, tag="delta_y_axis", no_tick_marks=True, no_tick_labels=True)
                     dpg.set_axis_limits("delta_y_axis", -1.1, 1.1)
