@@ -20,11 +20,11 @@ def create_controls(time, data, pll):
                            callback=reset_callback, user_data=(time, data, pll))
             dpg.add_button(label="Stopped", tag="btn_start", height=40, width=100,
                            callback=toggle_sim_run, user_data=False)
-        dpg.add_slider_int(label="Speed", tag="slider_speed", width=150, callback=update_speed, user_data=False,
+        dpg.add_slider_int(label="Simulation speed", tag="slider_speed", width=150, callback=update_speed, user_data=False,
                            min_value=MIN_SPEED, max_value=MAX_SPEED, default_value=DEFAULT_SPEED)
         dpg.add_slider_int(label="Initial phase", tag="slider_phase", width=150, user_data=[pll, DEFAULT_PHASE],
                            min_value=MIN_PHASE, max_value=MAX_PHASE, default_value=DEFAULT_PHASE, callback=update_phase)
-        dpg.add_slider_int(label="Step", tag="slider_step", width=150, user_data=pll, callback=update_step,
+        dpg.add_slider_int(label="Correct step", tag="slider_step", width=150, user_data=pll, callback=update_step,
                            min_value=MIN_STEP, max_value=MAX_STEP, default_value=DEFAULT_STEP)
         dpg.add_combo(label="Presets", items=list(PRESETS.keys()), default_value="Lagging", width=150,
                       callback=set_preset, user_data=pll)
@@ -41,11 +41,11 @@ def create_controls(time, data, pll):
 
         dpg.add_spacer(height=10)
         dpg.add_separator()
-        dpg.add_text("Generators settings")
-        dpg.add_slider_int(label="Input", tag="slider_input_gen", width=150, callback=update_freq_callback,
+        dpg.add_text("Generators period settings")
+        dpg.add_slider_int(label="Input osc", tag="slider_input_gen", width=150, callback=update_freq_callback,
                            min_value=MIN_INPUT_PERIOD, max_value=MAX_INPUT_PERIOD, default_value=DEFAULT_INPUT_PERIOD,
                            user_data=pll)
-        dpg.add_slider_int(label="Local", tag="slider_local_gen", width=150, callback=update_freq_callback,
+        dpg.add_slider_int(label="Local osc", tag="slider_local_gen", width=150, callback=update_freq_callback,
                            min_value=MIN_LOCAL_PERIOD, max_value=MAX_LOCAL_PERIOD, default_value=DEFAULT_LOCAL_PERIOD,
                            user_data=pll)
 
