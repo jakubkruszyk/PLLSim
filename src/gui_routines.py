@@ -54,7 +54,7 @@ def update_freq_callback(sender, app_data):
 
 def update_counters_callback(sender, app_data):
     pll = dpg.get_item_user_data(sender)
-    if sender == "slider_sum_gen":
+    if sender == "slider_sum_counter":
         pll.filter.sum_cnt_max = app_data
     else:
         pll.filter.lead_lag_cnt_max = app_data
