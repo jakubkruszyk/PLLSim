@@ -3,14 +3,20 @@ from src.gui_routines import *
 
 
 def create_layout(time, data, pll):
+    # load schematic image
+    width, height, channels, img_data = dpg.load_image(r"src/schematic.png")
+    with dpg.texture_registry():
+        dpg.add_static_texture(width=width, height=height, default_value=img_data, tag="schematic")
     with dpg.font_registry():
         default_font = dpg.add_font("src/LiberationMono-Regular.ttf", 16)
         counter_font = dpg.add_font("src/LiberationMono-Regular.ttf", 24)
+
     create_controls(time, data, pll)
     create_vertical_plots(time, data)
     dpg.bind_font(default_font)
     dpg.bind_item_font("lead_indicator", counter_font)
     dpg.bind_item_font("lag_indicator", counter_font)
+    dpg.bind_item_font("sum_indicator", counter_font)
 
 
 def create_controls(time, data, pll):
@@ -72,16 +78,20 @@ def create_vertical_plots(time, data):
                     dpg.add_line_series(time, data[0], parent="delta_y_axis", tag="delta_series")
 
                 with dpg.group(horizontal=True):
-                    dpg.add_text("Lead counter: 0", tag="lead_indicator")
+                    with dpg.group():
+                        dpg.add_text("Lead counter: 0", tag="lead_indicator")
+                        dpg.add_text("Lag counter: 0", tag="lag_indicator")
                     dpg.add_spacer(width=50)
-                    dpg.add_text("Lag counter: 0", tag="lag_indicator")
+                    dpg.add_text("Sum counter: 0", tag="sum_indicator")
 
-            with dpg.plot(label="Oscillators phases", height=500, width=500, anti_aliased=True):
-                dpg.add_plot_legend()
-                dpg.add_plot_axis(dpg.mvXAxis, tag="phase_x_axis", label="Time")
-                dpg.add_plot_axis(dpg.mvYAxis, tag="phase_y_axis", no_tick_marks=True, no_tick_labels=True,
-                                  label="Time/Period")
-                dpg.set_axis_limits("phase_x_axis", 0, DATA_POINTS_NUM)
-                dpg.set_axis_limits("phase_y_axis", 0, 5)
-                dpg.add_line_series(time, data[5], parent="phase_y_axis", tag="phase_input_series", label="Input")
-                dpg.add_line_series(time, data[6], parent="phase_y_axis", tag="phase_local_series", label="Local")
+            with dpg.group():
+                with dpg.plot(label="Oscillators phases", height=500, width=500, anti_aliased=True):
+                    dpg.add_plot_legend()
+                    dpg.add_plot_axis(dpg.mvXAxis, tag="phase_x_axis", label="Time")
+                    dpg.add_plot_axis(dpg.mvYAxis, tag="phase_y_axis", no_tick_marks=True, no_tick_labels=True,
+                                      label="Time/Period")
+                    dpg.set_axis_limits("phase_x_axis", 0, DATA_POINTS_NUM)
+                    dpg.set_axis_limits("phase_y_axis", 0, 5)
+                    dpg.add_line_series(time, data[5], parent="phase_y_axis", tag="phase_input_series", label="Input")
+                    dpg.add_line_series(time, data[6], parent="phase_y_axis", tag="phase_local_series", label="Local")
+                dpg.add_image("schematic")

@@ -18,6 +18,7 @@ def pll_update(pll, data, time):
 
     dpg.set_value("lead_indicator", f"Lead counter: {pll.filter.lead}")
     dpg.set_value("lag_indicator", f"Lag counter: {pll.filter.lag}")
+    dpg.set_value("sum_indicator", f"Sum counter: {pll.filter.lag + pll.filter.lead}")
 
 
 def toggle_sim_run(sender, app_data):
